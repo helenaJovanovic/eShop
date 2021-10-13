@@ -30,6 +30,14 @@ namespace eShop.Controllers
             return Ok(response);
         }
 
+        [AllowAnonymous]
+        [HttpPost("[action]")]
+        public IActionResult Register(RegistrationRequest model )
+        {
+            var response = _userService.Register(model);
+            return Ok(response);
+        }
+
         [Authorize(Role.Admin)]
         [HttpGet]
         public IActionResult GetAll()

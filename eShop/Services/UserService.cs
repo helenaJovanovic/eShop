@@ -14,6 +14,7 @@ namespace eShop.Services
     public interface IUserService
     {
         AuthenticateResponse Authenticate(AuthenticateRequest model);
+        AuthenticateResponse Register(RegistrationRequest model);
         IEnumerable<User> GetAll();
         User GetById(int id);
     }
@@ -40,6 +41,28 @@ namespace eShop.Services
             if (user == null || !BCryptNet.Verify(model.Password, user.PasswordHash))
                 throw new AppException("Username or paswword is incorrect");
 
+            var jwtToken = _jwtUtils.GenerateJwtToken(user);
+
+            return new AuthenticateResponse(user, jwtToken);
+        }
+
+        public AuthenticateResponse Register(RegistrationRequest model)
+        {
+            var user = _context.Users.SingleOrDefault(x => x.Username == model.Username);
+
+            if(user != null)
+            {
+                throw new AppException("Username alrady exists");
+            }
+
+            //make a user
+            user = new User { FirstName = model.FirstName, LastName = model.LastName, Username = model.Username, PasswordHash = BCryptNet.HashPassword(model.Password), Role = Role.User };
+
+            //save user to DB
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
+            //make a token for user
             var jwtToken = _jwtUtils.GenerateJwtToken(user);
 
             return new AuthenticateResponse(user, jwtToken);
