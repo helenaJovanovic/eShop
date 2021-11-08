@@ -24,9 +24,9 @@ namespace eShop.Controllers
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public IActionResult Authenticate(AuthenticateRequest model)
+        public  IActionResult Authenticate(AuthenticateRequest model)
         {
-            var response = _userService.Authenticate(model);
+            var response =  _userService.Authenticate(model);
             return Ok(response);
         }
 

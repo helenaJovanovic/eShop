@@ -3,6 +3,7 @@ using eShop.Entities;
 using eShop.Helpers;
 using eShop.Models.Users;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,9 +49,9 @@ namespace eShop.Services
 
         public AuthenticateResponse Register(RegistrationRequest model)
         {
-            var user = _context.Users.SingleOrDefault(x => x.Username == model.Username);
+            var user =  _context.Users.SingleOrDefault(x => x.Username == model.Username);
 
-            if(user != null)
+            if (user != null)
             {
                 throw new AppException("Username alrady exists");
             }
@@ -77,7 +78,8 @@ namespace eShop.Services
         {
             var user = _context.Users.Find(id);
             if (user == null) throw new KeyNotFoundException("User not found");
-                return user;
+            return user;
         }
+
     }
 }

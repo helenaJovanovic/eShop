@@ -1,4 +1,5 @@
 ﻿using eShop.Entities;
+using eShop.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -11,17 +12,15 @@ namespace eShop.Helpers
     public class DataContext: DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Item> Items { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
-        private readonly IConfiguration Configuration;
 
-        public DataContext(IConfiguration configuration)
+
+        public DataContext(DbContextOptions<DataContext> options): base(options)
         {
-            Configuration = configuration;
+
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            options.UseInMemoryDatabase("TestDb");
-        }
     }
 }
