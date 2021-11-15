@@ -15,6 +15,6 @@ namespace eShop.Models
         public string Name { get; set; }
         public string Description { get; set; }
 
-        public IList<Item> Item { get; set; }
+        public IList<Item> Items { get; set; }
     }
 }

@@ -98,7 +98,7 @@ namespace eShop.Controllers
                 }
                 else
                 {
-                    throw new AppException("Concurrency exception");
+                    throw new AppException("Concurrency exception with updating item");
                 }
             }
 
