@@ -17,6 +17,9 @@ namespace eShop.Models
         [Required]
         //Calculated as Price - Discount*Price
         public float Discount { get; set; }
+
+        [Required]
+        public string Name { get; set; }
        
         public string Description { get; set; }
 

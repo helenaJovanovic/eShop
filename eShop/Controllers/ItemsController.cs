@@ -47,7 +47,80 @@ namespace eShop.Controllers
             return item;
         }
         
-     
+        [AllowAnonymous]
+        [HttpGet("namesearch/{name}")]
+        public async Task<ActionResult<IEnumerable<Item>>> GetSearchByName(string name)
+        {
+            var items = await _context.Items.Where(x => x.Name.ToLower().Contains(name)).ToListAsync();
+
+            if(items == null)
+            {
+                return NotFound();
+            }
+
+            return items;
+        }
+
+        [AllowAnonymous]
+        [HttpGet("categorysearch/{categoryId}")]
+        public async Task<ActionResult<IEnumerable<Item>>> GetSearchByCategory(int categoryId)
+        {
+            var items = await _context.Items.Where(x => x.CategoryId == categoryId).ToListAsync();
+
+            if(items == null)
+            {
+                return NotFound();
+            }
+
+            return items;
+        }
+
+        [Authorize(Role.Admin)]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateItem(int id, Item item)
+        {
+            if(id != item.ItemId)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(item).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                if(!ItemExists(item.ItemId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw new AppException("Concurrency exception");
+                }
+            }
+
+            return NoContent();
+        }
+
+        [Authorize(Role.Admin)]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> deleteItem(int id)
+        {
+            var item = await _context.Items.FindAsync(id);
+
+            if(item == null)
+            {
+                return NotFound();
+            }
+
+            _context.Items.Remove(item);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
 
         [Authorize(Role.Admin)]
         [HttpPost]
@@ -65,6 +138,7 @@ namespace eShop.Controllers
 
             return CreatedAtAction("GetItem", new { id = item.ItemId }, item);
         }
+
 
 
         private bool ItemExists(int id)
