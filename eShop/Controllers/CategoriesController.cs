@@ -32,6 +32,15 @@ namespace eShop.Controllers
             return await _context.Categories.ToListAsync();
         }
 
+        //Get all paginated
+        [AllowAnonymous]
+        [HttpGet("pag/{start}/{len}")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories(int start, int len)
+        {
+            return await _context.Categories.Skip(start).Take(len).ToListAsync();
+        }
+
+
         //Get one
         [AllowAnonymous]
         [HttpGet("{id}")]
@@ -49,10 +58,10 @@ namespace eShop.Controllers
 
         //Get categories that match given name
         [AllowAnonymous]
-        [HttpGet("namesearch/{name}")]
-        public async Task<ActionResult<IEnumerable<Category>>> GetSearchByName(string name)
+        [HttpGet("namesearch/{name}/{start}/{len}")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetSearchByName(string name, int start, int len)
         {
-            var categories = await _context.Categories.Where(x => x.Name.ToLower().Contains(name)).ToListAsync();
+            var categories = await _context.Categories.Where(x => x.Name.ToLower().Contains(name)).Skip(start).Take(len).ToListAsync();
 
             if (categories == null)
             {

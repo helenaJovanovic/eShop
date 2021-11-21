@@ -32,6 +32,14 @@ namespace eShop.Controllers
             return await _context.Items.ToListAsync();
         }
 
+        //GET: /Items/pag/start/len with pagination
+        [AllowAnonymous]
+        [HttpGet("pag/{start}/{len}")]
+        public async Task<ActionResult<IEnumerable<Item>>> GetItemsPag(int start, int len)
+        {
+            return await _context.Items.Skip(start).Take(len).ToListAsync();
+        }
+
         // GET: /Items/5
         [AllowAnonymous]
         [HttpGet("{id}")]
@@ -48,10 +56,10 @@ namespace eShop.Controllers
         }
         
         [AllowAnonymous]
-        [HttpGet("namesearch/{name}")]
-        public async Task<ActionResult<IEnumerable<Item>>> GetSearchByName(string name)
+        [HttpGet("namesearch/{name}/{start}/{len}")]
+        public async Task<ActionResult<IEnumerable<Item>>> GetSearchByName(string name, int start, int len)
         {
-            var items = await _context.Items.Where(x => x.Name.ToLower().Contains(name)).ToListAsync();
+            var items = await _context.Items.Where(x => x.Name.ToLower().Contains(name)).Skip(start).Take(len).ToListAsync();
 
             if(items == null)
             {
@@ -62,10 +70,10 @@ namespace eShop.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("categorysearch/{categoryId}")]
-        public async Task<ActionResult<IEnumerable<Item>>> GetSearchByCategory(int categoryId)
+        [HttpGet("categorysearch/{categoryId}/{start}/{len}")]
+        public async Task<ActionResult<IEnumerable<Item>>> GetSearchByCategory(int categoryId, int start, int len)
         {
-            var items = await _context.Items.Where(x => x.CategoryId == categoryId).ToListAsync();
+            var items = await _context.Items.Where(x => x.CategoryId == categoryId).Skip(start).Take(len).ToListAsync();
 
             if(items == null)
             {
