@@ -53,6 +53,8 @@ namespace eShop.Controllers
                 throw new AppException("Category doesn't exist");
             }
 
+            await _context.Entry(category).Collection(s => s.Items).LoadAsync();
+
             return category;
         }
 

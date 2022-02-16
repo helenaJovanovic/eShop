@@ -136,7 +136,7 @@ namespace eShop.Controllers
         {            
             //default behaviour if category is not specified
             //is to set categoryid to 1 which represents no category
-            if(item.CategoryId == 0)
+            if(item.CategoryId == 0 || item.CategoryId == null)
             {
                 item.CategoryId = 1;
             }

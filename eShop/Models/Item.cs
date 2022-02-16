@@ -10,7 +10,7 @@ namespace eShop.Models
     {
         [Key]
         public int ItemId { get; set; }
-        
+
         [Required]
         public float Price { get; set; }
 
@@ -20,7 +20,7 @@ namespace eShop.Models
 
         [Required]
         public string Name { get; set; }
-       
+
         public string Description { get; set; }
 
         public int? CategoryId { get; set; }
