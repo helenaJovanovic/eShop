@@ -22,7 +22,7 @@ namespace eShop.Authorization
 
         public async Task Invoke(HttpContext context, IUserService userService, IJwtUtils jwtUtils)
         {
-            //Toke ne uzima iz headera
+            //Token uzima iz headera
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
             //vrsi se validacija
             var userId = jwtUtils.ValidateJwtToken(token);

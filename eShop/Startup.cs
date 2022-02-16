@@ -73,6 +73,7 @@ namespace eShop
 
             app.UseRouting();
 
+            //TODO: not every method and header
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseMiddleware<ErrorHandlerMiddleware>();
