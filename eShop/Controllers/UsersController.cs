@@ -50,7 +50,7 @@ namespace eShop.Controllers
         public IActionResult GetById(int id)
         {
             var currentUser = (User)HttpContext.Items["User"];
-            if (id != currentUser.Id && currentUser.Role != Role.Admin)
+            if (id != currentUser.UserId && currentUser.Role != Role.Admin)
                 return Unauthorized(new { message = "Unathorized" });
 
             var user = _userService.GetById(id);

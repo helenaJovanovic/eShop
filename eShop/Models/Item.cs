@@ -21,8 +21,11 @@ namespace eShop.Models
         [Required]
         public string Name { get; set; }
 
+        [Required]
         public string Description { get; set; }
 
+        [Required]
+        public int Quantity;
         public int? CategoryId { get; set; }
 
         public string ImagePath { get; set; }

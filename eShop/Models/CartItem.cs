@@ -6,16 +6,18 @@ using System.Threading.Tasks;
 
 namespace eShop.Models
 {
-    public class Category
+    public class CartItem
     {
         [Key]
-        public int CategoryId { get; set; }
+        public int CartItemId { get; set; }
 
         [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Description { get; set; }
+        public int CartId { get; set; }
 
-        public IList<Item> Items { get; set; }
+        [Required]
+        public int ItemId { get; set; }
+
+        [Required]
+        public int Quantity { get; set; }
     }
 }
