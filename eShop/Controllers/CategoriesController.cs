@@ -50,7 +50,7 @@ namespace eShop.Controllers
 
             if (category == null)
             {
-                throw new AppException("Category doesn't exist");
+                throw new KeyNotFoundException("Category doesn't exist");
             }
 
             await _context.Entry(category).Collection(s => s.Items).LoadAsync();
@@ -67,7 +67,7 @@ namespace eShop.Controllers
 
             if (categories == null)
             {
-                return NotFound();
+                throw new KeyNotFoundException("No results");
             }
 
             return categories;
@@ -81,7 +81,7 @@ namespace eShop.Controllers
             await _context.SaveChangesAsync();
 
 
-            return CreatedAtAction("GetCategory", new { id = category.CategoryId }, category);
+            return CreatedAtAction(nameof(GetCategory), new { id = category.CategoryId }, category);
         }
 
         [Authorize(Role.Admin)]
@@ -92,7 +92,7 @@ namespace eShop.Controllers
 
             if(category == null)
             {
-                return NotFound();
+                throw new KeyNotFoundException("Category doesn't exist");
             }
 
             _context.Categories.Remove(category);
@@ -107,7 +107,7 @@ namespace eShop.Controllers
         {
             if(id != category.CategoryId)
             {
-                return BadRequest();
+                throw new AppException("Parameter id doesn't match body id");
             }
 
             _context.Entry(category).State = EntityState.Modified;
@@ -120,11 +120,11 @@ namespace eShop.Controllers
             {
                 if(!CategoryExists(category.CategoryId))
                 {
-                    return NotFound();
+                    throw new KeyNotFoundException("Category doesn't exist");
                 }
                 else
                 {
-                    throw new AppException("Concurreny exception with updating category");
+                    throw new Exception("Concurrency exception with updating category");
                 }
             }
 
