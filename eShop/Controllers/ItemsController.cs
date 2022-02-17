@@ -49,7 +49,7 @@ namespace eShop.Controllers
 
             if (item == null)
             {
-                throw new AppException("Item doesn't exist");
+                throw new KeyNotFoundException("Item doesn't exist");
             }
 
             return item;
@@ -63,7 +63,7 @@ namespace eShop.Controllers
 
             if(items == null)
             {
-                return NotFound();
+                throw new KeyNotFoundException("No results");
             }
 
             return items;
@@ -77,7 +77,7 @@ namespace eShop.Controllers
 
             if(items == null)
             {
-                return NotFound();
+                throw new KeyNotFoundException("No results");
             }
 
             return items;
@@ -89,7 +89,7 @@ namespace eShop.Controllers
         {
             if(id != item.ItemId)
             {
-                return BadRequest();
+                throw new AppException("Parameter id doesn't match body id");
             }
 
             _context.Entry(item).State = EntityState.Modified;
@@ -102,11 +102,11 @@ namespace eShop.Controllers
             {
                 if(!ItemExists(item.ItemId))
                 {
-                    return NotFound();
+                    throw new KeyNotFoundException("Item doesn't exist");
                 }
                 else
                 {
-                    throw new AppException("Concurrency exception with updating item");
+                    throw new Exception("Concurrency exception with updating item");
                 }
             }
 
@@ -121,7 +121,7 @@ namespace eShop.Controllers
 
             if(item == null)
             {
-                return NotFound();
+                throw new KeyNotFoundException("Item doesn't exist");
             }
 
             _context.Items.Remove(item);
@@ -143,8 +143,8 @@ namespace eShop.Controllers
             _context.Items.Add(item);
             await _context.SaveChangesAsync();
             
-
-            return CreatedAtAction("GetItem", new { id = item.ItemId }, item);
+            //TODO: check created at action
+            return CreatedAtAction(nameof(GetItem), new { id = item.ItemId }, item);
         }
 
 
