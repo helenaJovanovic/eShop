@@ -92,7 +92,7 @@ namespace eShop.Controllers
             return CreatedAtAction(nameof(GetCart), new { id = cart.CartId }, cart);
 
         }
-
+       
         /*
             Find item delete it from the cart if the current user is the cart owner.
             Then substract the item from the total price
@@ -109,7 +109,7 @@ namespace eShop.Controllers
 
             User user = getUser();
             Cart cart = await _context.Carts.FindAsync(cartItem.CartId);
-            if(cart.UserId != user.UserId)
+            if (cart.UserId != user.UserId)
             {
                 return Unauthorized();
             }
@@ -120,10 +120,65 @@ namespace eShop.Controllers
             cart.Total -= item.Price * cartItem.Quantity;
 
             _context.Entry(cart).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new Exception("Concurrency exception while updating cart and cart items");
+            }
 
             return NoContent();
         }
 
+        [Authorize(Role.User)]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCartItem(int id, CartItem _cartItem)
+        {
+            if (id != _cartItem.CartItemId)
+            {
+                throw new AppException("Parameter id doesn't match body id");
+            }
+
+            bool exists = _context.CartItems.Any(ci => ci.CartItemId == id);
+            if (exists == false)
+            {
+                throw new KeyNotFoundException("Cart Item doesn't exist");
+            }
+
+            User user = getUser();
+            Cart cart = await _context.Carts.FindAsync(_cartItem.CartId);
+            if (cart.UserId != user.UserId)
+            {
+                return Unauthorized();
+            }
+
+            _context.Entry(_cartItem).State = EntityState.Modified;
+
+
+            var cartItem = _context.Entry(_cartItem).GetDatabaseValues();
+            int currentQuantity = cartItem.GetValue<int>("Quantity");
+
+            Item item = await _context.Items.FindAsync(_cartItem.ItemId);
+            cart.Total += item.Price * (_cartItem.Quantity - currentQuantity);
+
+            _context.Entry(cart).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new Exception("Concurrency exception while updating cart and cart items");
+            }
+
+            return NoContent();
+
+        }
     }
+
+    
 }
