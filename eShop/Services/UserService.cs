@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BCryptNet = BCrypt.Net.BCrypt;
+using eShop.Models;
 
 namespace eShop.Services
 {
@@ -61,6 +62,10 @@ namespace eShop.Services
 
             //save user to DB
             _context.Users.Add(user);
+            _context.SaveChanges();
+
+            var cart = new Cart { UserId = user.UserId };
+            _context.Carts.Add(cart);
             _context.SaveChanges();
 
             //make a token for user

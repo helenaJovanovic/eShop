@@ -13,5 +13,9 @@ namespace eShop.Models
 
         [Required]
         public int UserId { get; set; }
+
+        [System.ComponentModel.DefaultValue(0)]
+        public float Total { get; set; }
+        public IList<CartItem> CartItems { get; set; }
     }
 }

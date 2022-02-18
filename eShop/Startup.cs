@@ -18,6 +18,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using BCryptNet = BCrypt.Net.BCrypt;
+using Microsoft.AspNetCore.Http;
 
 namespace eShop
 {
@@ -36,11 +37,14 @@ namespace eShop
 
             services.AddCors();
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
             );
 
-           
+            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "eShop", Version = "v1" });
