@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,32 @@ namespace eShop.Controllers
             _context = context;
         }
 
+        /*
+         * Items sorted acording to sortBy enum and then paginated
+         * 0 PriceAscending
+         * 1 PriceDescending
+         * 2 NameAZ
+         */
+        async Task<List<Item>> PaginatedSortItemsAsync(int start, int len, SortBy sortBy, Expression<Func<Item, bool>> whereExpr)
+        {
+            List<Item> items = new List<Item>();
+
+            if (sortBy == SortBy.PriceAscending)
+            {
+                items = await _context.Items.Where(whereExpr).OrderBy(i => i.Price).Skip(start).Take(len).ToListAsync();
+            }
+            else if (sortBy == SortBy.PriceDescending)
+            {
+                items = await _context.Items.Where(whereExpr).OrderByDescending(i => i.Price).Skip(start).Take(len).ToListAsync();
+            }
+            else if (sortBy == SortBy.NameAZ)
+            {
+                items = await _context.Items.Where(whereExpr).OrderBy(i => i.Name).Skip(start).Take(len).ToListAsync();
+            }
+
+            return items;
+        }
+
         // GET: /Items
         [AllowAnonymous]
         [HttpGet]
@@ -35,9 +62,12 @@ namespace eShop.Controllers
         //GET: /Items/pag/start/len with pagination
         [AllowAnonymous]
         [HttpGet("pag/{start}/{len}")]
-        public async Task<ActionResult<IEnumerable<Item>>> GetItemsPag(int start, int len)
+        public async Task<ActionResult<IEnumerable<Item>>> GetItemsPag(int start, int len, [FromQuery]SortBy sortBy)
         {
-            return await _context.Items.Skip(start).Take(len).ToListAsync();
+
+            List<Item> items = await PaginatedSortItemsAsync(start, len, sortBy, x => true);
+
+            return items;
         }
 
         // GET: /Items/5
@@ -57,28 +87,18 @@ namespace eShop.Controllers
         
         [AllowAnonymous]
         [HttpGet("namesearch/{name}/{start}/{len}")]
-        public async Task<ActionResult<IEnumerable<Item>>> GetSearchByName(string name, int start, int len)
+        public async Task<ActionResult<IEnumerable<Item>>> GetSearchByName(string name, int start, int len, [FromQuery] SortBy sortBy)
         {
-            var items = await _context.Items.Where(x => x.Name.ToLower().Contains(name)).Skip(start).Take(len).ToListAsync();
-
-            if(items == null)
-            {
-                throw new KeyNotFoundException("No results");
-            }
+            var items = await PaginatedSortItemsAsync(start, len, sortBy, x => x.Name.Contains(name));
 
             return items;
         }
 
         [AllowAnonymous]
         [HttpGet("categorysearch/{categoryId}/{start}/{len}")]
-        public async Task<ActionResult<IEnumerable<Item>>> GetSearchByCategory(int categoryId, int start, int len)
+        public async Task<ActionResult<IEnumerable<Item>>> GetSearchByCategory(int categoryId, int start, int len, [FromQuery] SortBy sortBy)
         {
-            var items = await _context.Items.Where(x => x.CategoryId == categoryId).Skip(start).Take(len).ToListAsync();
-
-            if(items == null)
-            {
-                throw new KeyNotFoundException("No results");
-            }
+            var items = await PaginatedSortItemsAsync(start, len, sortBy, x => x.CategoryId == categoryId);
 
             return items;
         }

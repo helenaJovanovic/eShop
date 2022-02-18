@@ -37,7 +37,7 @@ namespace eShop.Controllers
         [HttpGet("pag/{start}/{len}")]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories(int start, int len)
         {
-            return await _context.Categories.Skip(start).Take(len).ToListAsync();
+            return await _context.Categories.OrderBy(c => c.Name).Skip(start).Take(len).ToListAsync();
         }
 
 
@@ -63,7 +63,9 @@ namespace eShop.Controllers
         [HttpGet("namesearch/{name}/{start}/{len}")]
         public async Task<ActionResult<IEnumerable<Category>>> GetSearchByName(string name, int start, int len)
         {
-            var categories = await _context.Categories.Where(x => x.Name.ToLower().Contains(name)).Skip(start).Take(len).ToListAsync();
+            //Values of sortBy: 0, 1, 2
+            List<Category> categories = await _context.Categories.Where(x => x.Name.ToLower().Contains(name))
+                .OrderBy(c => c.Name).Skip(start).Take(len).ToListAsync();
 
             if (categories == null)
             {
