@@ -2,6 +2,7 @@
 using eShop.Entities;
 using eShop.Helpers;
 using eShop.Models;
+using eShop.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,31 +19,19 @@ namespace eShop.Controllers
     public class CartController: ControllerBase
     {
         private readonly DataContext _context;
-        private IHttpContextAccessor _httpContextAccessor;
-
-        public CartController(DataContext context, IHttpContextAccessor httpContextAccessor)
+        private readonly CartService _cartService;
+        public CartController(DataContext context,
+            CartService cartService)
         {
             _context = context;
-            _httpContextAccessor = httpContextAccessor;
-        }
-
-        User getUser()
-        {
-            User user = (User)_httpContextAccessor.HttpContext.Items["User"];
-
-            if (user == null)
-            {
-                throw new KeyNotFoundException("Unknown user");
-            }
-
-            return user;
+            _cartService = cartService;
         }
 
         [Authorize(Role.User)]
         [HttpGet]
         public async Task<ActionResult<Cart>> GetCart()
         {
-            User user = getUser();
+            User user = _cartService.getUser();
 
             var userCart = await _context.Carts.Where(c => c.UserId == user.UserId).FirstOrDefaultAsync();
 
@@ -55,42 +44,9 @@ namespace eShop.Controllers
         [HttpPost]
         public async Task<ActionResult<CartItem>> addItemToCart(AddItemRequest req)
         {
-            //get user and user cart
-            User user = getUser();
-            Cart cart = await _context.Carts.Where(c => c.UserId == user.UserId).FirstOrDefaultAsync();
-            await _context.Entry(cart).Collection(s => s.CartItems).LoadAsync();
-
-            //check if item is already in the cart
-            //in that case quantity should be modified
-            foreach(var ci in cart.CartItems)
-            {
-                if(ci.ItemId == req.ItemId)
-                {
-                    throw new AppException("Cannot add an item that is already in the cart");
-                }
-            }
-            //find if item with id exists
-            Item item = await _context.Items.FindAsync(req.ItemId);
-            if (item == null)
-            {
-                throw new KeyNotFoundException("No such item id");
-            }
-
-            //make a cart item for a cart based on itemId
-            CartItem cartItem = new CartItem { CartId = cart.CartId, ItemId = req.ItemId, Quantity = req.Quantity };
-            _context.CartItems.Add(cartItem);
-            await _context.SaveChangesAsync();
-
-            //update the total price of items in the cart
-            float Price = item.Price;
-            cart.Total += cartItem.Quantity*Price;
-
-            //update the total price of items in the cart
-            _context.Entry(cart).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            Cart cart = await _cartService.addItemToCartAsync(req);
 
             return CreatedAtAction(nameof(GetCart), new { id = cart.CartId }, cart);
-
         }
        
         /*
@@ -107,37 +63,23 @@ namespace eShop.Controllers
                 throw new KeyNotFoundException("Cart Item doesn't exist");
             }
 
-            User user = getUser();
-            Cart cart = await _context.Carts.FindAsync(cartItem.CartId);
-            if (cart.UserId != user.UserId)
+            Cart cart = await _cartService.GetUserCartAsync();
+            //is id in usercart
+            if (!_cartService.IsCartItemInUserCart(id, cart))
             {
                 return Unauthorized();
             }
 
-            _context.CartItems.Remove(cartItem);
-
-            Item item = await _context.Items.FindAsync(cartItem.ItemId);
-            cart.Total -= item.Price * cartItem.Quantity;
-
-            _context.Entry(cart).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw new Exception("Concurrency exception while updating cart and cart items");
-            }
+            await _cartService.removeCartItemAsync(cart, cartItem);
 
             return NoContent();
         }
 
         [Authorize(Role.User)]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCartItem(int id, CartItem _cartItem)
+        public async Task<IActionResult> UpdateCartItem(int id, CartItem cartItem)
         {
-            if (id != _cartItem.CartItemId)
+            if (id != cartItem.CartItemId)
             {
                 throw new AppException("Parameter id doesn't match body id");
             }
@@ -148,32 +90,14 @@ namespace eShop.Controllers
                 throw new KeyNotFoundException("Cart Item doesn't exist");
             }
 
-            User user = getUser();
-            Cart cart = await _context.Carts.FindAsync(_cartItem.CartId);
-            if (cart.UserId != user.UserId)
+            Cart cart = await _cartService.GetUserCartAsync();
+            //is id in usercart
+            if (!_cartService.IsCartItemInUserCart(id, cart))
             {
                 return Unauthorized();
             }
 
-            _context.Entry(_cartItem).State = EntityState.Modified;
-
-
-            var cartItem = _context.Entry(_cartItem).GetDatabaseValues();
-            int currentQuantity = cartItem.GetValue<int>("Quantity");
-
-            Item item = await _context.Items.FindAsync(_cartItem.ItemId);
-            cart.Total += item.Price * (_cartItem.Quantity - currentQuantity);
-
-            _context.Entry(cart).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw new Exception("Concurrency exception while updating cart and cart items");
-            }
+            await _cartService.changeItemAsync(cart, cartItem);
 
             return NoContent();
 

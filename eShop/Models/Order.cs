@@ -20,5 +20,6 @@ namespace eShop.Models
         public float Total { get; set; }
         [Required]
         public string PaymentId { get; set; }
+        public IList<OrderItem> OrderItems { get; set; }
     }
 }

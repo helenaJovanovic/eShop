@@ -86,6 +86,8 @@ namespace eShop
 
             services.AddScoped<IJwtUtils, JwtUtils>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ItemService>();
+            services.AddScoped<CartService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

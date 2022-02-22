@@ -3,11 +3,8 @@ using eShop.Entities;
 using eShop.Helpers;
 using eShop.Models.Users;
 using Microsoft.Extensions.Options;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using BCryptNet = BCrypt.Net.BCrypt;
 using eShop.Models;
 
@@ -34,6 +31,7 @@ namespace eShop.Services
             _context = context;
             _jwtUtils = jwtUtils;
             _appSettings = appSettings.Value;
+           
         }
 
         public AuthenticateResponse Authenticate(AuthenticateRequest model)
@@ -85,6 +83,5 @@ namespace eShop.Services
             if (user == null) throw new KeyNotFoundException("User not found");
             return user;
         }
-
     }
 }

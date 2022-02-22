@@ -10,6 +10,7 @@ using eShop.Helpers;
 using eShop.Models;
 using eShop.Authorization;
 using eShop.Entities;
+using eShop.Services;
 
 namespace eShop.Controllers
 {
@@ -19,36 +20,11 @@ namespace eShop.Controllers
     public class ItemsController : ControllerBase
     {
         private readonly DataContext _context;
-
-        public ItemsController(DataContext context)
+        private readonly ItemService _its;
+        public ItemsController(DataContext context, ItemService its)
         {
             _context = context;
-        }
-
-        /*
-         * Items sorted acording to sortBy enum and then paginated
-         * 0 PriceAscending
-         * 1 PriceDescending
-         * 2 NameAZ
-         */
-        async Task<List<Item>> PaginatedSortItemsAsync(int start, int len, SortBy sortBy, Expression<Func<Item, bool>> whereExpr)
-        {
-            List<Item> items = new List<Item>();
-
-            if (sortBy == SortBy.PriceAscending)
-            {
-                items = await _context.Items.Where(whereExpr).OrderBy(i => i.Price).Skip(start).Take(len).ToListAsync();
-            }
-            else if (sortBy == SortBy.PriceDescending)
-            {
-                items = await _context.Items.Where(whereExpr).OrderByDescending(i => i.Price).Skip(start).Take(len).ToListAsync();
-            }
-            else if (sortBy == SortBy.NameAZ)
-            {
-                items = await _context.Items.Where(whereExpr).OrderBy(i => i.Name).Skip(start).Take(len).ToListAsync();
-            }
-
-            return items;
+            _its = its;
         }
 
         // GET: /Items
@@ -65,7 +41,7 @@ namespace eShop.Controllers
         public async Task<ActionResult<IEnumerable<Item>>> GetItemsPag(int start, int len, [FromQuery]SortBy sortBy)
         {
 
-            List<Item> items = await PaginatedSortItemsAsync(start, len, sortBy, x => true);
+            List<Item> items = await _its.PaginatedSortItemsAsync(start, len, sortBy, x => true);
 
             return items;
         }
@@ -89,7 +65,7 @@ namespace eShop.Controllers
         [HttpGet("namesearch/{name}/{start}/{len}")]
         public async Task<ActionResult<IEnumerable<Item>>> GetSearchByName(string name, int start, int len, [FromQuery] SortBy sortBy)
         {
-            var items = await PaginatedSortItemsAsync(start, len, sortBy, x => x.Name.Contains(name));
+            var items = await _its.PaginatedSortItemsAsync(start, len, sortBy, x => x.Name.Contains(name));
 
             return items;
         }
@@ -98,7 +74,7 @@ namespace eShop.Controllers
         [HttpGet("categorysearch/{categoryId}/{start}/{len}")]
         public async Task<ActionResult<IEnumerable<Item>>> GetSearchByCategory(int categoryId, int start, int len, [FromQuery] SortBy sortBy)
         {
-            var items = await PaginatedSortItemsAsync(start, len, sortBy, x => x.CategoryId == categoryId);
+            var items = await _its.PaginatedSortItemsAsync(start, len, sortBy, x => x.CategoryId == categoryId);
 
             return items;
         }
@@ -120,7 +96,7 @@ namespace eShop.Controllers
             }
             catch(DbUpdateConcurrencyException)
             {
-                if(!ItemExists(item.ItemId))
+                if(!_its.ItemExists(item.ItemId))
                 {
                     throw new KeyNotFoundException("Item doesn't exist");
                 }
@@ -165,13 +141,6 @@ namespace eShop.Controllers
             
             //TODO: check created at action
             return CreatedAtAction(nameof(GetItem), new { id = item.ItemId }, item);
-        }
-
-
-
-        private bool ItemExists(int id)
-        {
-            return _context.Items.Any(e => e.ItemId == id);
         }
     }
 }
