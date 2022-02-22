@@ -48,4 +48,4 @@ dotnet build
 ```
 
 # Database scheme
-![](https://github.com/helenaJovanovic/eShop/blob/master/db_schema.png)
+![](https://github.com/helenaJovanovic/eShop/blob/master/dbschema.png)
