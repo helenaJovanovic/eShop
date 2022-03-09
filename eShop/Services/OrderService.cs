@@ -28,7 +28,18 @@ namespace eShop.Services
 
         public async Task<List<Order>> GetAllOrdersAsync()
         {
-            return await _context.Orders.ToListAsync();
+            List<Order> orders = await _context.Orders.ToListAsync();
+
+            foreach (Order or in orders)
+            {
+                await _context.Entry(or).Collection(order => order.OrderItems).LoadAsync();
+                foreach(OrderItem oi in or.OrderItems)
+                {
+                    await _context.Entry(oi).Reference(orderItem => orderItem.Item).LoadAsync();
+                }
+            }
+
+            return orders;
         }
         public async Task<List<Order>> GetUserOrdersAsync()
         {
@@ -37,6 +48,10 @@ namespace eShop.Services
             foreach(Order or in orders)
             {
                 await _context.Entry(or).Collection(order => order.OrderItems).LoadAsync();
+                foreach (OrderItem oi in or.OrderItems)
+                {
+                    await _context.Entry(oi).Reference(orderItem => orderItem.Item).LoadAsync();
+                }
             }
 
             return orders;

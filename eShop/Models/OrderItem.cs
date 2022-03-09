@@ -11,10 +11,10 @@ namespace eShop.Models
         [Key]
         public int OrderItemId { get; set; }
         [Required]
-        public int ItemId { get; set; }
-        public Item Item;
-        [Required]
         public int OrderId { get; set; }
+        [Required]
+        public int ItemId { get; set; }
+        public Item Item { get; set; }
         [Required]
         public int Quantity { get; set; }
 

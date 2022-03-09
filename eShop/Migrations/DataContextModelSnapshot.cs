@@ -193,6 +193,10 @@ namespace eShop.Migrations
 
                     b.HasKey("OrderItemId");
 
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("OrderId");
+
                     b.ToTable("OrderItems");
                 });
 
@@ -212,6 +216,23 @@ namespace eShop.Migrations
                         .HasForeignKey("CategoryId");
                 });
 
+            modelBuilder.Entity("eShop.Models.OrderItem", b =>
+                {
+                    b.HasOne("eShop.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("eShop.Models.Order", null)
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+                });
+
             modelBuilder.Entity("eShop.Models.Cart", b =>
                 {
                     b.Navigation("CartItems");
@@ -220,6 +241,11 @@ namespace eShop.Migrations
             modelBuilder.Entity("eShop.Models.Category", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("eShop.Models.Order", b =>
+                {
+                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }
