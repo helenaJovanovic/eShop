@@ -90,21 +90,7 @@ namespace eShop.Controllers
 
             _context.Entry(item).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch(DbUpdateConcurrencyException)
-            {
-                if(!_its.ItemExists(item.ItemId))
-                {
-                    throw new KeyNotFoundException("Item doesn't exist");
-                }
-                else
-                {
-                    throw new Exception("Concurrency exception with updating item");
-                }
-            }
+            await _its.SaveAsync();
 
             return NoContent();
         }
@@ -121,7 +107,7 @@ namespace eShop.Controllers
             }
 
             _context.Items.Remove(item);
-            await _context.SaveChangesAsync();
+            await _its.SaveAsync();
 
             return NoContent();
         }
@@ -137,7 +123,7 @@ namespace eShop.Controllers
                 item.CategoryId = 1;
             }
             _context.Items.Add(item);
-            await _context.SaveChangesAsync();
+            await _its.SaveAsync();
             
             //TODO: check created at action
             return CreatedAtAction(nameof(GetItem), new { id = item.ItemId }, item);

@@ -64,6 +64,9 @@ namespace eShop.Controllers
         public async Task<ActionResult<IEnumerable<Category>>> GetSearchByName(string name, int start, int len)
         {
             //Values of sortBy: 0, 1, 2
+            /*
+                enum {PriceAscending, PriceDescending, NameAZ }
+            */
             List<Category> categories = await _context.Categories.Where(x => x.Name.ToLower().Contains(name))
                 .OrderBy(c => c.Name).Skip(start).Take(len).ToListAsync();
 

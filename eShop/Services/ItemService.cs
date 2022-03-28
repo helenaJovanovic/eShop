@@ -1,5 +1,6 @@
 ﻿using eShop.Helpers;
 using eShop.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,12 +10,10 @@ using System.Threading.Tasks;
 
 namespace eShop.Services
 {
-    public class ItemService
+    public class ItemService: AbstractDb
     {
-        DataContext _context;
-        public ItemService(DataContext dataContext)
+        public ItemService(DataContext dataContext): base(dataContext)
         {
-            _context = dataContext;
         }
         /*
          * Items sorted acording to sortBy enum and then paginated

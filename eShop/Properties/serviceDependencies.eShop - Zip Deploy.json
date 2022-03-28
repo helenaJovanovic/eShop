@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/eshopdbserver2/databases/eShop_db",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:data",
+      "secretStore": "AzureAppSettings"
+    }
+  }
+}

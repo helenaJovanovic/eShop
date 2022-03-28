@@ -11,14 +11,13 @@ using System.Threading.Tasks;
 namespace eShop.Services
 {
     //TODO: Rename acording to function
-    public class AbstractCartOrder
+    public class AbstractCartOrder : AbstractDb
     {
-        protected readonly DataContext _context;
+        
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AbstractCartOrder(DataContext context, IHttpContextAccessor httpContextAccessor)
+        public AbstractCartOrder(DataContext context, IHttpContextAccessor httpContextAccessor) : base(context)
         {
             _httpContextAccessor = httpContextAccessor;
-            _context = context;
         }
 
         public User getUser()
@@ -32,7 +31,6 @@ namespace eShop.Services
 
             return user;
         }
-
         //get users cart
         public async Task<Cart> GetUserCartAsync(int UserId)
         {
@@ -68,18 +66,6 @@ namespace eShop.Services
             CartItem cartItem = new CartItem { CartId = CartId, ItemId = req.ItemId, Quantity = req.Quantity };
             await _context.CartItems.AddAsync(cartItem);
             return cartItem;
-        }
-
-        public async Task SaveAsync()
-        {
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw new Exception("Concurrency exception while updating cart and cart items");
-            }
         }
     }
 }
