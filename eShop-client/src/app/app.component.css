@@ -1,0 +1,7 @@
+.form-row {
+    display: flex;
+}
+
+.formElement{
+    margin: 5px;
+}

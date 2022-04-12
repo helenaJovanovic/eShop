@@ -1,0 +1,80 @@
+<app-searchbar></app-searchbar>
+
+
+<section class="section-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="search-result bg-gray">
+                    <h2>Results For "Electronics"</h2>
+                    <p>123 Results on 12 December, 2017</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            
+            <app-category-side-bar class="col-md-3"></app-category-side-bar>
+
+            
+            <div class="col-md-9">
+                <div class="category-search-filter">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Short</strong>
+                            <select>
+                                <option value="1" default>Lowest Price</option>
+                                <option value="2">Highest Price</option>
+                            </select>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="product-grid-list">
+                    <div class="row mt-30">
+                        <!-- product card -->
+                        <app-item-card class="col-sm-12 col-lg-4 col-md-6"></app-item-card>
+                            
+                        <app-item-card class="col-sm-12 col-lg-4 col-md-6"></app-item-card>
+
+                        <app-item-card class="col-sm-12 col-lg-4 col-md-6"></app-item-card>
+
+                        <app-item-card class="col-sm-12 col-lg-4 col-md-6"></app-item-card>
+
+                        <app-item-card class="col-sm-12 col-lg-4 col-md-6"></app-item-card>
+
+                        <app-item-card class="col-sm-12 col-lg-4 col-md-6"></app-item-card>
+
+                        <app-item-card class="col-sm-12 col-lg-4 col-md-6"></app-item-card>
+
+                        <app-item-card class="col-sm-12 col-lg-4 col-md-6"></app-item-card>
+
+                        <app-item-card class="col-sm-12 col-lg-4 col-md-6"></app-item-card>
+
+
+                    </div>
+                </div>
+                <div class="pagination justify-content-center">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item active"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
