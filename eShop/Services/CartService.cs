@@ -47,7 +47,7 @@ namespace eShop.Services
             return false;
         }
 
-        public async Task<Cart> addItemToCartAsync(AddItemRequest req)
+        public async Task<Cart> addItemToCartAsync(AddToCartRequest req)
         {
             Cart cart = await GetUserCartAsync(user.UserId);
             Item item = await _context.Items.FindAsync(req.ItemId);

@@ -61,7 +61,7 @@ namespace eShop.Services
             await SaveAsync();
         }
 
-        public async Task<CartItem> createCartItemAsync(int CartId, AddItemRequest req)
+        public async Task<CartItem> createCartItemAsync(int CartId, AddToCartRequest req)
         {
             CartItem cartItem = new CartItem { CartId = CartId, ItemId = req.ItemId, Quantity = req.Quantity };
             await _context.CartItems.AddAsync(cartItem);

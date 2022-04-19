@@ -9,6 +9,8 @@ import { HomeComponent } from './home/home.component';
 import { SearchbarComponent } from './home/searchbar/searchbar.component';
 import { CategorySideBarComponent } from './home/category-side-bar/category-side-bar.component';
 import { ItemCardComponent } from './home/item-card/item-card.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { ItemCardComponent } from './home/item-card/item-card.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    FormsModule,
+    AppRoutingModule,
+    NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]

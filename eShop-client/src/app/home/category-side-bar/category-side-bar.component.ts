@@ -7,7 +7,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CategorySideBarComponent implements OnInit {
 
-  constructor() { }
+  public sliderValueMin: Number;
+  public sliderValueMax: Number;
+
+  constructor() { 
+    this.sliderValueMin = 0;
+    this.sliderValueMax = 5000;
+  }
 
   ngOnInit(): void {
   }

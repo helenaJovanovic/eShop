@@ -19,12 +19,15 @@
 
     <div class="widget price-range w-100">
         <h4 class="widget-header">Price Range</h4>
+
         <div class="block">
-            <input class="range-track w-100" type="text" data-slider-min="0" data-slider-max="5000" data-slider-step="5"
-                data-slider-value="[0,5000]">
-            <div class="d-flex justify-content-between mt-2">
-                <span class="value">$10 - $5000</span>
-            </div>
+
+            <label for="minValue" class="form-label">Min Value: {{sliderValueMin}}</label>
+            <input [(ngModel)]="sliderValueMin" type="range" class="form-range" min="10" max="5000" step=5 id="minValue">
+
+            <label for="maxValue" class="form-label">Max Value: {{sliderValueMax}}</label>
+            <input [(ngModel)]="sliderValueMax" type="range" class="form-range" min="10" max="5000" step=5 id="maxValue">
+            
         </div>
     </div>
 

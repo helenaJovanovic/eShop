@@ -42,7 +42,7 @@ namespace eShop.Controllers
 
         [Authorize(Role.User)]
         [HttpPost]
-        public async Task<ActionResult<CartItem>> addItemToCart(AddItemRequest req)
+        public async Task<ActionResult<CartItem>> addItemToCart(AddToCartRequest req)
         {
             Cart cart = await _cartService.addItemToCartAsync(req);
 

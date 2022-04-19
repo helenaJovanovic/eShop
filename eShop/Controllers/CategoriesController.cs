@@ -2,6 +2,7 @@
 using eShop.Entities;
 using eShop.Helpers;
 using eShop.Models;
+using eShop.Models.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -80,13 +81,14 @@ namespace eShop.Controllers
 
         [Authorize(Role.Admin)]
         [HttpPost]
-        public async Task<ActionResult<Category>> PostItem(Category category)
+        public async Task<ActionResult<Category>> PostItem(AddCategoryRequest category)
         {
-            _context.Categories.Add(category);
+            Category c = new Category { Name = category.Name, Description = category.Description };
+            _context.Categories.Add(c);
             await _context.SaveChangesAsync();
 
 
-            return CreatedAtAction(nameof(GetCategory), new { id = category.CategoryId }, category);
+            return CreatedAtAction(nameof(GetCategory), new { id = c.CategoryId }, c);
         }
 
         [Authorize(Role.Admin)]

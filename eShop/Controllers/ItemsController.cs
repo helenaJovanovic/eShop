@@ -11,6 +11,7 @@ using eShop.Models;
 using eShop.Authorization;
 using eShop.Entities;
 using eShop.Services;
+using eShop.Models.DTOs;
 
 namespace eShop.Controllers
 {
@@ -114,19 +115,23 @@ namespace eShop.Controllers
 
         [Authorize(Role.Admin)]
         [HttpPost]
-        public async Task<ActionResult<Item>> PostItem(Item item)
-        {            
-            //default behaviour if category is not specified
-            //is to set categoryid to 1 which represents no category
-            if(item.CategoryId == 0 || item.CategoryId == null)
+        public async Task<ActionResult<Item>> PostItem(AddItemRequest item)
+        {
+            Item i = new Item
             {
-                item.CategoryId = 1;
-            }
-            _context.Items.Add(item);
+                Price = item.Price,
+                Discount = item.Discount,
+                Name = item.Name,
+                Description = item.Description,
+                CategoryId = item.CategoryId,
+                ImagePath = item.ImagePath
+            };
+
+            _context.Items.Add(i);
             await _its.SaveAsync();
             
             //TODO: check created at action
-            return CreatedAtAction(nameof(GetItem), new { id = item.ItemId }, item);
+            return CreatedAtAction(nameof(GetItem), new { id = i.ItemId }, i);
         }
     }
 }

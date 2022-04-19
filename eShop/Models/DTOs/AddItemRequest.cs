@@ -1,16 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
-namespace eShop.Models
+namespace eShop.Models.DTOs
 {
     public class AddItemRequest
     {
         [Required]
-        public int ItemId { get; set; }
+        public float Price { get; set; }
+
         [Required]
-        public int Quantity { get; set; }
+        //Calculated as Price - Discount*Price
+        public float Discount { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
+        [Required]
+        public string Description { get; set; }
+        public int? CategoryId { get; set; }
+
+        public string ImagePath { get; set; }
+
     }
 }
+
