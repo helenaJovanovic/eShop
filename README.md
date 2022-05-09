@@ -35,7 +35,7 @@ Web shop REST API backend. Manage items, items stock, items category, user carts
 `"Data Source=$YourDatabaseName$;Database=eShop;Trusted_Connection=True;MultipleActiveResultSets=True;`
 
 # Running:
-Make sure that you have [.NET 5 SDK installed](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks)
+Make sure that you have [.NET 6 SDK installed](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 
 Navigate to project folder and run:
 ```
